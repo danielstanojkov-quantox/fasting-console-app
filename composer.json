@@ -1,0 +1,17 @@
+{
+    "name": "daniel/composer_autoload",
+    "authors": [
+        {
+            "name": "Daniel Stanojkov",
+            "email": "daniel.stanojkov@quantox.com"
+        }
+    ],
+    "require": {
+        "nesbot/carbon": "^2.46"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
