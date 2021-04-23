@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Components\Fast as FastInstance;
+
 class Fast 
 {
     public $all_fasts;
@@ -9,13 +11,18 @@ class Fast
 
     public function __construct()
     {
-        $this->all_fasts = $this->getAllFasts();
-        $this->active_fast = $this->setActiveFast();
+        $this->loadFasts();
+        $this->setActiveFast();
     }
 
-    protected function getAllFasts()
+    protected function loadFasts()
     {
-        return json_decode(file_get_contents(APP_DB));
+        $fasts = json_decode(file_get_contents(APP_DB));
+        $fasts = array_map(function($fast){
+            return new FastInstance($fast);
+        }, $fasts);
+
+        $this->all_fasts = $fasts;
     }
 
     protected function setActiveFast()
@@ -24,7 +31,7 @@ class Fast
             return $fast->status == 'active';
         });
 
-        return count($fast) > 0 ? $fast[0] : null;
+        $this->active_fast = count($fast) > 0 ? $fast[0] : null;
     }
 
     public function isUserFasting()

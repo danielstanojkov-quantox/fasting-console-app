@@ -47,6 +47,7 @@ class Tracker
     public function promptUserForOption()
     {
         $option = $this->input->read();
+        $option = is_numeric($option) ? +$option : $option;
 
         if(!$this->checkIfOptionExists($option)) {
             $this->output->invalidMenuOptionSelected();
@@ -54,11 +55,22 @@ class Tracker
             return;
         }
 
-        echo "success";
+        $this->proccessSelectedOption($option);
     }
 
     protected function checkIfOptionExists($option)
     {
-        return in_array($option, array_keys($this->menu_options)) ? true : false;
+        return in_array($option, array_keys($this->menu_options), true) ? true : false;
+    }
+
+
+    public function proccessSelectedOption($option)
+    {
+        echo "Option: {$option}" . PHP_EOL;
+        // 1. this
+        // 2. this
+        // 3. this
+        // 4. this
+        // 5. this
     }
 }
