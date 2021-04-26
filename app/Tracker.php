@@ -10,6 +10,8 @@ class Tracker
     public $input;
     public $output;
 
+    public $fastModel;
+
     public $menu_options = [
         1 => 'Check the fast status',
         2 => 'Start a fast ( available only if there is not an active fast)',
@@ -17,9 +19,6 @@ class Tracker
         4 => 'Update an active fast (available only if there is an active fast)',
         5 => 'List all fasts'
     ];
-
-    // Models
-    public $fastModel;
 
     public function __construct($input, $output)
     {
@@ -107,11 +106,10 @@ class Tracker
 
     protected function promptForFastDetails()
     {
-        $this->saveActiveFast(
-            $this->promptForStartDate(),
-            $this->promptForFastType()
-        );
+        $start_date = $this->promptForStartDate();
+        $fast_type = $this->promptForFastType();
 
+        $this->saveActiveFast($start_date, $fast_type);
         $this->init();
     }
 
@@ -150,10 +148,10 @@ class Tracker
 
     protected function askForNewFastDetails()
     {
-        $this->saveUpdatedFast(
-            $this->promptForStartDate(),
-            $this->promptForFastType()
-        );
+        $start_date = $this->promptForStartDate();
+        $fast_type = $this->promptForFastType();
+
+        $this->saveUpdatedFast($start_date, $fast_type);
     }
 
     protected function saveUpdatedFast($start_date, $fast_type)
@@ -166,7 +164,7 @@ class Tracker
     public function listAllFasts()
     {
         $all_fasts = $this->fastModel->all_fasts;
-        
+
         if (count($all_fasts) > 0) {
             $this->output->listAllFasts($all_fasts);
         } else {
@@ -179,45 +177,50 @@ class Tracker
     protected function promptForStartDate()
     {
         $this->output->askForStartDate();
-        return $this->askForStartDate();
+        $start_date = null;
+
+        while (!$start_date) {
+
+            $date = $this->input->read();
+
+            try {
+                $date = Carbon::parse($date);
+                if ($date->isPast()) {
+                    throw new Exception();
+                } else {
+                    $start_date = $date;
+                    return $start_date;
+                }
+            } catch (\Throwable $e) {
+                $this->output->invalidStartDate();
+                continue;
+            }
+        }
     }
 
     protected function promptForFastType()
     {
         $this->output->askForFastType();
-        return $this->askForFastType();
-    }
 
-
-    private function askForStartDate()
-    {
-        $date = $this->input->read();
-
-        try {
-            $date = Carbon::parse($date);
-            if ($date->isPast()) throw new Exception();
-        } catch (\Throwable $e) {
-            $this->output->invalidStartDate();
-            $this->askForStartDate();
-        }
-
-        return $date;
-    }
-
-    private function askForFastType()
-    {
         $available_types = [16, 18, 20, 36];
+        $fast_type = null;
 
-        $type = $this->input->read();
+        while (!$fast_type) {
 
-        if (!in_array($type, $available_types)) {
-            $this->output->invalidFastTypeMessage();
-            $this->askForFastType();
+            $type = $this->input->read();
+
+            if (!in_array($type, $available_types)) {
+                $this->output->invalidFastTypeMessage();
+                continue;
+            } else {
+                $fast_type = $type;
+                return $fast_type;
+            }
         }
-
-        return $type;
     }
 
+
+    // Output fasting state
 
     private function handleNoFastingState()
     {

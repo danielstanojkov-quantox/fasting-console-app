@@ -74,7 +74,7 @@ class Fast
 
     public function updateActiveFast($start_date, $fast_type)
     {
-        $end_date = Carbon::parse($start_date)->addHours($fast_type);
+        $end_date = Carbon::parse($start_date)->addHours((int)$fast_type);
 
         $fasts = json_decode(file_get_contents(APP_DB));
         $fasts = array_map(function($fast) use ($start_date, $end_date, $fast_type){

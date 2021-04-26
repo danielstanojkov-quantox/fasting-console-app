@@ -44,12 +44,12 @@ class Fast
 
     public function getStartDate()
     {
-        return Carbon::parse($this->start_date)->format('d M Y h:i:s');
+        return Carbon::parse($this->start_date)->format('d M Y H:i:s');
     }
 
     public function getEndDate()
     {
-        return Carbon::parse($this->end_date)->format('d M Y h:i:s');
+        return Carbon::parse($this->end_date)->format('d M Y H:i:s');
     }
 
     public function getType()
