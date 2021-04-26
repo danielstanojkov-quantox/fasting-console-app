@@ -29,7 +29,7 @@ class Fast
     public function getElapsedTime()
     {
         if($this->isStartDateInFuture()){
-            return "The fast in not started yet.";
+            return "The fast is not started yet.";
         }
 
         $seconds = Carbon::now()->diffInSeconds($this->getStartDate());

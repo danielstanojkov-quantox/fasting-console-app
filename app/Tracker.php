@@ -25,6 +25,7 @@ class Tracker
         $this->input = $input;
         $this->output = $output;
 
+        $this->output->initMessage();
         $this->loadModels();
         $this->init();
     }
@@ -124,13 +125,36 @@ class Tracker
     public function endActiveFast()
     {
         if ($this->fastModel->isUserFasting()) {
-            $this->fastModel->endActiveFast();
-            $this->output->fastEndedFeddback();
+            if ($this->confirmFastCancelation()) {
+                $this->fastModel->endActiveFast();
+                $this->output->fastEndedFeddback();
+            } else {
+                $this->output->fastEndingCancelled();
+            }
         } else {
             $this->handleNoFastingState();
         }
 
         $this->init();
+    }
+
+    protected function confirmFastCancelation()
+    {
+        $this->output->confirmFastCancelation();
+
+        $final_answer = null;
+        $possible_answers = ['n', 'N', 'y', 'Y'];
+
+        while (!$final_answer) {
+            $answer = $this->input->read();
+            if (in_array($answer, $possible_answers)) {
+                $final_answer = $answer;
+
+                return ($final_answer == 'n' || $final_answer == 'N')
+                    ? false
+                    : true;
+            }
+        }
     }
 
     // 4. Update an active fast 
