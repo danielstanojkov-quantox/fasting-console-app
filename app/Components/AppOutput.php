@@ -114,4 +114,11 @@ class AppOutput
             $this->output_decorator->decorateGreen("Your fast has been successfully ended.")
         );
     }
+
+    public function fastUpdatedFeedback()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateGreen("Your fast details has been successfully updated.")
+        ); 
+    }
 }

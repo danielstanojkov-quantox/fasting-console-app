@@ -107,14 +107,71 @@ class Tracker
 
     protected function promptForFastDetails()
     {
-        $this->output->askForStartDate();
-        $start_date = $this->askForStartDate();
+        $this->saveActiveFast(
+            $this->promptForStartDate(),
+            $this->promptForFastType()
+        );
 
-        $this->output->askForFastType();
-        $fast_type = $this->askForFastType();
-
-        $this->saveActiveFast($start_date, $fast_type);
         $this->init();
+    }
+
+    private function saveActiveFast($start_date, $fast_type)
+    {
+        $this->fastModel->saveActiveFast($start_date, $fast_type);
+        $this->output->fastAddedFeedback();
+    }
+
+
+    // End Active Fast
+    public function endActiveFast()
+    {
+        if ($this->fastModel->isUserFasting()) {
+            $this->fastModel->endActiveFast();
+            $this->output->fastEndedFeddback();
+        } else {
+            $this->handleNoFastingState();
+        }
+
+        $this->init();
+    }
+
+    // Update an active fast 
+    public function updateActiveFast()
+    {
+        if ($this->fastModel->isUserFasting()) {
+            $this->askForNewFastDetails();
+            $this->output->fastUpdatedFeedback();
+        } else {
+            $this->handleNoFastingState();
+        }
+
+        return $this->init();
+    }
+
+    protected function askForNewFastDetails()
+    {
+        $this->saveUpdatedFast(
+            $this->promptForStartDate(),
+            $this->promptForFastType()
+        );
+    }
+
+    protected function saveUpdatedFast($start_date, $fast_type)
+    {
+        $this->fastModel->updateActiveFast($start_date, $fast_type);
+    }
+
+
+    protected function promptForStartDate()
+    {
+        $this->output->askForStartDate();
+        return $this->askForStartDate();
+    }
+
+    protected function promptForFastType()
+    {
+        $this->output->askForFastType();
+        return $this->askForFastType();
     }
 
 
@@ -145,33 +202,6 @@ class Tracker
         }
 
         return $type;
-    }
-
-    private function saveActiveFast($start_date, $fast_type)
-    {
-        $this->fastModel->saveActiveFast($start_date, $fast_type);
-        $this->output->fastAddedFeedback();
-    }
-
-
-
-    // End Active Fast
-    public function endActiveFast()
-    {
-        if ($this->fastModel->isUserFasting()) {
-            $this->fastModel->endActiveFast();
-            $this->output->fastEndedFeddback();
-        } else {
-            $this->handleNoFastingState();
-        }
-
-        $this->init();
-    }
-
-    // Update an active fast 
-    public function updateActiveFast()
-    {
-        echo 'update active fast';
     }
 
 

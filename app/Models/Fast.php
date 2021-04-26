@@ -71,4 +71,29 @@ class Fast
        $this->loadFasts();
        $this->setActiveFast();
     }
+
+    public function updateActiveFast($start_date, $fast_type)
+    {
+        $end_date = Carbon::parse($start_date)->addHours($fast_type);
+
+        $fasts = json_decode(file_get_contents(APP_DB));
+        $fasts = array_map(function($fast) use ($start_date, $end_date, $fast_type){
+            if($fast->status == 'active'){
+                return [
+                    'id' => $fast->id,
+                    'status' => $fast->status,
+                    'type' => $fast_type,
+                    'start_date' => $start_date,
+                    'end_date' => $end_date
+                ];
+            }
+
+            return $fast;
+        }, $fasts);
+
+        file_put_contents(APP_DB, json_encode($fasts));
+
+        $this->loadFasts();
+        $this->setActiveFast();
+    }
 }
