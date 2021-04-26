@@ -33,7 +33,14 @@ class AppOutput
     public function displayUserNotFastingMessage()
     {
         $this->output->write(
-            $this->output_decorator->decorateYellow("You don't have an active fast currently.")
+            $this->output_decorator->decorateYellow("You don't have an active fast at the moment.")
+        );
+    }
+
+    public function displayUserFastingMessage()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateRed("You already have an active fast!")
         );
     }
 
@@ -51,6 +58,60 @@ class AppOutput
             $this->output_decorator->decorateGreen($fast->getElapsedTime()) . PHP_EOL . 
             $this->output_decorator->decorateWhite("Fast type: ") .
             $this->output_decorator->decorateGreen($fast->getType()) . PHP_EOL 
+        );
+    }
+
+    public function askForStartDate()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateYellow("Please enter a start date for your fast. ") . 
+            $this->output_decorator->decorateBlue('[Y/m/d h:m:s]')
+        );
+    }
+
+    public function invalidStartDate()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateRed("Invalid date.")
+        );
+    }
+
+    public function pastDateEntered()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateRed("Please enter date in the future.")
+        );
+    }
+
+
+    public function askForFastType()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateYellow("Please enter your fast type. ") . 
+            $this->output_decorator->decorateWhite('Possible values: 16, 18, 20, 36')
+        );
+    }
+
+
+    public function invalidFastTypeMessage()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateRed("Please enter one of the types specified above.")
+        );
+    }
+
+
+    public function fastAddedFeedback()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateGreen("Your fast has been successfully created.")
+        );
+    }
+
+    public function fastEndedFeddback()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateGreen("Your fast has been successfully ended.")
         );
     }
 }

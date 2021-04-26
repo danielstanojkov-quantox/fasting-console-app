@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use Exception;
+
 class Tracker
 {
     public $input;
@@ -84,40 +87,106 @@ class Tracker
         }
     }
 
+    // Check Fast Status
     public function checkFastStatus()
     {
         $this->fastModel->isUserFasting()
             ? $this->output->displayFastData($this->fastModel->active_fast)
             : $this->handleNoFastingState();
+
+        $this->init();
     }
 
-    private function handleNoFastingState()
+    // Start Fast
+    public function startFast()
     {
-        $this->output->displayUserNotFastingMessage();
+        $this->fastModel->isUserFasting()
+            ? $this->handleFastingState()
+            : $this->promptForFastDetails();
+    }
+
+    protected function promptForFastDetails()
+    {
+        $this->output->askForStartDate();
+        $start_date = $this->askForStartDate();
+
+        $this->output->askForFastType();
+        $fast_type = $this->askForFastType();
+
+        $this->saveActiveFast($start_date, $fast_type);
         $this->init();
     }
 
 
-
-
-
-
-
-
-    public function startFast()
+    private function askForStartDate()
     {
+        $date = $this->input->read();
 
-        echo 'start fast';
+        try {
+            $date = Carbon::parse($date);
+            if ($date->isPast()) throw new Exception();
+        } catch (\Throwable $e) {
+            $this->output->invalidStartDate();
+            $this->askForStartDate();
+        }
+
+        return $date;
     }
 
+    private function askForFastType()
+    {
+        $available_types = [16, 18, 20, 36];
+
+        $type = $this->input->read();
+
+        if (!in_array($type, $available_types)) {
+            $this->output->invalidFastTypeMessage();
+            $this->askForFastType();
+        }
+
+        return $type;
+    }
+
+    private function saveActiveFast($start_date, $fast_type)
+    {
+        $this->fastModel->saveActiveFast($start_date, $fast_type);
+        $this->output->fastAddedFeedback();
+    }
+
+
+
+    // End Active Fast
     public function endActiveFast()
     {
-        echo 'end active fast';
+        if ($this->fastModel->isUserFasting()) {
+            $this->fastModel->endActiveFast();
+            $this->output->fastEndedFeddback();
+        } else {
+            $this->handleNoFastingState();
+        }
+
+        $this->init();
     }
 
+    // Update an active fast 
     public function updateActiveFast()
     {
         echo 'update active fast';
+    }
+
+
+
+
+
+    private function handleNoFastingState()
+    {
+        $this->output->displayUserNotFastingMessage();
+    }
+
+    private function handleFastingState()
+    {
+        $this->output->displayUserFastingMessage();
+        $this->init();
     }
 
     public function listAllFasts()
