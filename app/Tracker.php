@@ -49,7 +49,7 @@ class Tracker
         $option = $this->input->read();
         $option = is_numeric($option) ? +$option : $option;
 
-        if(!$this->checkIfOptionExists($option)) {
+        if (!$this->checkIfOptionExists($option)) {
             $this->output->invalidMenuOptionSelected();
             $this->promptUserForOption();
             return;
@@ -66,11 +66,62 @@ class Tracker
 
     public function proccessSelectedOption($option)
     {
-        echo "Option: {$option}" . PHP_EOL;
-        // 1. this
-        // 2. this
-        // 3. this
-        // 4. this
-        // 5. this
+        switch ($option) {
+            case '1':
+                $this->checkFastStatus();
+                break;
+            case '2':
+                $this->startFast();
+                break;
+            case '3':
+                $this->endActiveFast();
+                break;
+            case '4':
+                $this->updateActiveFast();
+                break;
+            case '5':
+                $this->listAllFasts();
+        }
+    }
+
+    public function checkFastStatus()
+    {
+        $this->fastModel->isUserFasting()
+            ? $this->output->displayFastData($this->fastModel->active_fast)
+            : $this->handleNoFastingState();
+    }
+
+    private function handleNoFastingState()
+    {
+        $this->output->displayUserNotFastingMessage();
+        $this->init();
+    }
+
+
+
+
+
+
+
+
+    public function startFast()
+    {
+
+        echo 'start fast';
+    }
+
+    public function endActiveFast()
+    {
+        echo 'end active fast';
+    }
+
+    public function updateActiveFast()
+    {
+        echo 'update active fast';
+    }
+
+    public function listAllFasts()
+    {
+        echo 'all fasts';
     }
 }

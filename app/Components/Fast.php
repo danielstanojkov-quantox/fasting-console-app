@@ -54,7 +54,7 @@ class Fast
 
     public function getType()
     {
-        return $this->type;
+        return $this->type . ' hour fast';
     }
 
     protected function isStartDateInFuture()
