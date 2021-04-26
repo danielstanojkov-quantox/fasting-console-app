@@ -87,7 +87,7 @@ class Tracker
         }
     }
 
-    // Check Fast Status
+    // 1. Check Fast Status
     public function checkFastStatus()
     {
         $this->fastModel->isUserFasting()
@@ -97,7 +97,7 @@ class Tracker
         $this->init();
     }
 
-    // Start Fast
+    // 2. Start Fast
     public function startFast()
     {
         $this->fastModel->isUserFasting()
@@ -122,7 +122,7 @@ class Tracker
     }
 
 
-    // End Active Fast
+    // 3. End Active Fast
     public function endActiveFast()
     {
         if ($this->fastModel->isUserFasting()) {
@@ -135,7 +135,7 @@ class Tracker
         $this->init();
     }
 
-    // Update an active fast 
+    // 4. Update an active fast 
     public function updateActiveFast()
     {
         if ($this->fastModel->isUserFasting()) {
@@ -161,6 +161,20 @@ class Tracker
         $this->fastModel->updateActiveFast($start_date, $fast_type);
     }
 
+
+    // 5. List All Fasts
+    public function listAllFasts()
+    {
+        $all_fasts = $this->fastModel->all_fasts;
+        
+        if (count($all_fasts) > 0) {
+            $this->output->listAllFasts($all_fasts);
+        } else {
+            $this->output->noFastsAvailable();
+        }
+
+        $this->init();
+    }
 
     protected function promptForStartDate()
     {
@@ -205,22 +219,15 @@ class Tracker
     }
 
 
-
-
-
     private function handleNoFastingState()
     {
         $this->output->displayUserNotFastingMessage();
     }
 
+
     private function handleFastingState()
     {
         $this->output->displayUserFastingMessage();
         $this->init();
-    }
-
-    public function listAllFasts()
-    {
-        echo 'all fasts';
     }
 }

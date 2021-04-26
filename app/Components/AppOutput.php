@@ -46,10 +46,11 @@ class AppOutput
 
     public function displayFastData($fast)
     {
+        $statusColor = $fast->status == 'active' ? 'decorateGreen' : 'decorateRed';
         $this->output->write(
             $this->output_decorator->decorateBlue('Fast Information:') . PHP_EOL .
             $this->output_decorator->decorateWhite("Status: ") .
-            $this->output_decorator->decorateGreen($fast->getStatus()) . PHP_EOL .
+            $this->output_decorator->$statusColor($fast->getStatus()) . PHP_EOL .
             $this->output_decorator->decorateWhite("Start date: ") .
             $this->output_decorator->decorateGreen($fast->getStartDate()) . PHP_EOL .
             $this->output_decorator->decorateWhite("End date: ") .
@@ -120,5 +121,19 @@ class AppOutput
         $this->output->write(
             $this->output_decorator->decorateGreen("Your fast details has been successfully updated.")
         ); 
+    }
+
+    public function listAllFasts($fasts)
+    {
+        foreach ($fasts as $fast) {
+            $this->displayFastData($fast);
+        }
+    }
+
+    public function noFastsAvailable()
+    {
+        $this->output->write(
+            $this->output_decorator->decorateBlue("Your fasting history is empty.")
+        );
     }
 }
