@@ -1,6 +1,13 @@
 <?php
 
-function transformSeconds($n)
+/**
+ * Convert provided seconds into
+ * hours, minutes and seconds
+ *
+ * @param int $n
+ * @return string
+ */
+function transformSeconds($n): string
 {
     $day = floor($n / (24 * 3600));
 

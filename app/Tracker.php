@@ -7,11 +7,30 @@ use Exception;
 
 class Tracker
 {
+    /**
+     * 
+     * @var ConsoleInput $input
+     */
     public $input;
+
+    /**
+     * 
+     * @var AppOutput $output
+     */
     public $output;
 
+    /**
+     * Establishes connection with our db
+     *
+     * @var object $fastModel
+     */
     public $fastModel;
 
+    /**
+     * All available options on the meny
+     *
+     * @var array
+     */
     public $menu_options = [
         1 => 'Check the fast status',
         2 => 'Start a fast ( available only if there is not an active fast)',
@@ -20,6 +39,12 @@ class Tracker
         5 => 'List all fasts'
     ];
 
+    /**
+     * Tracker Constructor
+     *
+     * @param ConsoleInput $input
+     * @param AppOutput $output
+     */
     public function __construct($input, $output)
     {
         $this->input = $input;
@@ -30,24 +55,44 @@ class Tracker
         $this->init();
     }
 
-    public function loadModels()
+    /**
+     * Loads all neseeccarry models 
+     *
+     * @return void
+     */
+    public function loadModels(): void
     {
         $fastModel = MODELS_NAMESPACE . 'Fast';
         $this->fastModel = new $fastModel;
     }
 
-    public function init()
+    /**
+     * Reverts the application to initial state
+     *
+     * @return void
+     */
+    public function init(): void
     {
         $this->displayMenu();
         $this->promptUserForOption();
     }
 
-    public function displayMenu()
+    /**
+     * Displays the menu in terminal
+     *
+     * @return void
+     */
+    public function displayMenu(): void
     {
         $this->output->displayMenuOptions($this->menu_options);
     }
 
-    public function promptUserForOption()
+    /**
+     * Prompts the user to select option from the menu
+     *
+     * @return void
+     */
+    public function promptUserForOption(): void
     {
         $option = $this->input->read();
         $option = is_numeric($option) ? +$option : $option;
@@ -61,13 +106,24 @@ class Tracker
         $this->proccessSelectedOption($option);
     }
 
-    protected function checkIfOptionExists($option)
+    /**
+     * Checks if option exists in the menu
+     *
+     * @param string $option
+     * @return bool
+     */
+    protected function checkIfOptionExists($option): bool
     {
         return in_array($option, array_keys($this->menu_options), true) ? true : false;
     }
 
-
-    public function proccessSelectedOption($option)
+    /**
+     * Process the selected option
+     *
+     * @param string $option
+     * @return void
+     */
+    public function proccessSelectedOption($option): void
     {
         switch ($option) {
             case '1':
@@ -87,8 +143,12 @@ class Tracker
         }
     }
 
-    // 1. Check Fast Status
-    public function checkFastStatus()
+    /**
+     * 1. Check current status option selected
+     *
+     * @return void
+     */
+    public function checkFastStatus(): void
     {
         $this->fastModel->isUserFasting()
             ? $this->output->displayFastData($this->fastModel->active_fast)
@@ -97,15 +157,24 @@ class Tracker
         $this->init();
     }
 
-    // 2. Start Fast
-    public function startFast()
+    /**
+     * 2. Start Fast option selected
+     *
+     * @return void
+     */
+    public function startFast(): void
     {
         $this->fastModel->isUserFasting()
             ? $this->handleFastingState()
             : $this->promptForFastDetails();
     }
 
-    protected function promptForFastDetails()
+    /**
+     * Prompts the user to enter fast details
+     *
+     * @return void
+     */
+    protected function promptForFastDetails(): void
     {
         $start_date = $this->promptForStartDate();
         $fast_type = $this->promptForFastType();
@@ -114,15 +183,26 @@ class Tracker
         $this->init();
     }
 
-    private function saveActiveFast($start_date, $fast_type)
+    /**
+     * Saves the fast in database
+     *
+     * @param string $start_date
+     * @param string $fast_type
+     * @return void
+     */
+    private function saveActiveFast($start_date, $fast_type): void
     {
         $this->fastModel->saveActiveFast($start_date, $fast_type);
         $this->output->fastAddedFeedback();
     }
 
 
-    // 3. End Active Fast
-    public function endActiveFast()
+    /**
+     * 3. Ends an active fast
+     *
+     * @return void
+     */
+    public function endActiveFast(): void
     {
         if ($this->fastModel->isUserFasting()) {
             if ($this->confirmFastCancelation()) {
@@ -138,7 +218,12 @@ class Tracker
         $this->init();
     }
 
-    protected function confirmFastCancelation()
+    /**
+     * Confirm fast cancellation
+     *
+     * @return bool
+     */
+    protected function confirmFastCancelation(): bool
     {
         $this->output->confirmFastCancelation();
 
@@ -157,8 +242,12 @@ class Tracker
         }
     }
 
-    // 4. Update an active fast 
-    public function updateActiveFast()
+    /**
+     * 4. User selects to update the active post
+     *
+     * @return void
+     */
+    public function updateActiveFast(): void
     {
         if ($this->fastModel->isUserFasting()) {
             $this->askForNewFastDetails();
@@ -167,10 +256,15 @@ class Tracker
             $this->handleNoFastingState();
         }
 
-        return $this->init();
+        $this->init();
     }
 
-    protected function askForNewFastDetails()
+    /**
+     * Prompting the user for new fast details
+     *
+     * @return void
+     */
+    protected function askForNewFastDetails(): void
     {
         $start_date = $this->promptForStartDate();
         $fast_type = $this->promptForFastType();
@@ -183,9 +277,12 @@ class Tracker
         $this->fastModel->updateActiveFast($start_date, $fast_type);
     }
 
-
-    // 5. List All Fasts
-    public function listAllFasts()
+    /**
+     * 5. Print all fasts from db in tabular form
+     *
+     * @return void
+     */
+    public function listAllFasts(): void
     {
         $all_fasts = $this->fastModel->all_fasts;
 
@@ -198,7 +295,12 @@ class Tracker
         $this->init();
     }
 
-    protected function promptForStartDate()
+    /**
+     * Enter starting date for the fast
+     *
+     * @return Carbon $start_date
+     */
+    protected function promptForStartDate(): Carbon
     {
         $this->output->askForStartDate();
         $start_date = null;
@@ -222,7 +324,12 @@ class Tracker
         }
     }
 
-    protected function promptForFastType()
+    /**
+     * Enter fast type
+     *
+     * @return string $fast_type
+     */
+    protected function promptForFastType(): string
     {
         $this->output->askForFastType();
 
@@ -244,15 +351,25 @@ class Tracker
     }
 
 
-    // Output fasting state
-
-    private function handleNoFastingState()
+    /**
+     * User selects option which is currently unavailable
+     * because the user doesn't have an active fast
+     *
+     * @return void
+     */
+    private function handleNoFastingState(): void
     {
         $this->output->displayUserNotFastingMessage();
     }
 
 
-    private function handleFastingState()
+    /**
+     * User selects option which is currently unavailable
+     * because the user have an active fast
+     *
+     * @return void
+     */
+    private function handleFastingState(): void
     {
         $this->output->displayUserFastingMessage();
         $this->init();

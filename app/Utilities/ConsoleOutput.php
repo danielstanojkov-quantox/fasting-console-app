@@ -4,8 +4,14 @@ namespace App\Utilities;
 
 class ConsoleOutput
 {
-    public function write($string)
+    /**
+     * Write output
+     * 
+     * @param string $output
+     * @return void 
+     */
+    public function write($output): void
     {
-        echo $string . PHP_EOL;
+        echo $output . PHP_EOL;
     }
 }

@@ -9,7 +9,12 @@ use App\Components\AppOutput;
 
 class Application
 {
-    public function boot()
+    /**
+     * Boot the application
+     * 
+     * @return Tracker
+     */
+    public function boot(): Tracker
     {
         $output = new AppOutput(new ConsoleOutput, new ConsoleOutputColorDecorator);
 
