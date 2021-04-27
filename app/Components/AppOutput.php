@@ -298,4 +298,18 @@ class AppOutput
             $this->output_decorator->decorateYellow("Fast cancelation aborted.")
         );
     }
+
+    /**
+     * Prints random quote to the console
+     *
+     * @return void
+     */
+    public function printQuote($quote): void
+    {
+        $this->output->write(
+            $this->output_decorator->decorateRed("Inspirational Quote:") . PHP_EOL . 
+            $this->output_decorator->decorateWhite($quote->content) . PHP_EOL . 
+            $this->output_decorator->decorateBlue(" - {$quote->author}") . PHP_EOL 
+        );
+    }
 }
