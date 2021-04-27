@@ -4,15 +4,12 @@ A simple fasting console application developed in PHP.
 
 
 ### How to start this application
-```
+
 1. Clone this repository
-```
-```
 2. `cd ./fasting_console_app` (Get into the project directory)
+### Run 
 ```
-```
-3. Run `composer install`
+composer install
 ```
 4. Open new console window and type `./index`
-```
 
