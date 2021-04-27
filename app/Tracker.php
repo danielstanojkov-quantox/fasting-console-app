@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use App\API\RandomQuote;
 use Exception;
 
 class Tracker
@@ -150,11 +151,24 @@ class Tracker
      */
     public function checkFastStatus(): void
     {
+        $this->printInspirationalQuote();
+
         $this->fastModel->isUserFasting()
             ? $this->output->displayFastData($this->fastModel->active_fast)
             : $this->handleNoFastingState();
 
         $this->init();
+    }
+
+    /**
+     * Fetches and prints random quote
+     *
+     * @return void
+     */
+    public function printInspirationalQuote(): void
+    {
+        $quote = RandomQuote::get();
+        $this->output->printQuote($quote);
     }
 
     /**
