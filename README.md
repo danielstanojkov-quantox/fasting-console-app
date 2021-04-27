@@ -11,5 +11,5 @@ A simple fasting console application developed in PHP.
 ```
 composer install
 ```
-4. Open new console window and type `./index`
+#### Open new console window and type `./index`
 
