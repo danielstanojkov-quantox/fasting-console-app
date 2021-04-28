@@ -4,7 +4,5 @@
 require 'config/app.php';
 require 'vendor/autoload.php';
 
-
-
 $app = new App\Application;
 $app->boot();
