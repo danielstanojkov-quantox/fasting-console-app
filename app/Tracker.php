@@ -135,7 +135,7 @@ class Tracker
     public function proccessSelectedOption($option): void
     {
         $action = $this->menu_options[$option]['action'];
-      
+
         $this->$action();
     }
 
@@ -237,11 +237,11 @@ class Tracker
         $this->output->confirmFastCancelation();
 
         $final_answer = null;
-        $possible_answers = ['n', 'N', 'y', 'Y'];
+        $possible_answers = ['n', 'y'];
 
         while (!$final_answer) {
             $answer = $this->input->read();
-            if (in_array($answer, $possible_answers)) {
+            if (in_array(strtolower($answer), $possible_answers)) {
                 $final_answer = $answer;
 
                 return ($final_answer == 'n' || $final_answer == 'N')
@@ -359,7 +359,6 @@ class Tracker
         }
     }
 
-
     /**
      * User selects option which is currently unavailable
      * because the user doesn't have an active fast
@@ -371,7 +370,6 @@ class Tracker
         $this->output->displayUserNotFastingMessage();
     }
 
-
     /**
      * User selects option which is currently unavailable
      * because the user have an active fast
@@ -382,5 +380,16 @@ class Tracker
     {
         $this->output->displayUserFastingMessage();
         $this->init();
+    }
+
+    /**
+     * Exit application
+     *
+     * @return void
+     */
+    protected function exit(): void
+    {
+        $this->output->exitMessage();
+        die;
     }
 }

@@ -32,6 +32,11 @@ class MenuOptions
             'name' => 'List all fasts',
             'action' => 'listAllFasts',
             'status' => ANY
+        ],
+        [
+            'name' => 'Exit',
+            'action' => 'exit',
+            'status' => ANY
         ]
     ];
 
@@ -70,20 +75,6 @@ class MenuOptions
             }
         );
 
-        return self::reindexArray($filtered_options);
-    }
-
-    /**
-     * Make an one based array
-     *
-     * @param array $array
-     * @return array
-     */
-    private static function reindexArray($array): array
-    {
-        return array_combine(
-            range(1, count($array)),
-            array_values($array)
-        );
+        return reindexArray($filtered_options);
     }
 }

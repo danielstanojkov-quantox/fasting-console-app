@@ -134,7 +134,7 @@ class Fast
                 : [
                     'id' => $fast->id,
                     'status' => $fast->status,
-                    'type' => $fast_type,
+                    'type' => (int)$fast_type,
                     'start_date' => $start_date,
                     'end_date' => $end_date
                 ];

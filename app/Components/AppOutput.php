@@ -220,6 +220,7 @@ class AppOutput
     public function listAllFasts($fasts): void
     {
         $this->output->write(
+            PHP_EOL . 
             $this->output_decorator->decorateWhite('----------------------------------------------') . PHP_EOL .
                 $this->output_decorator->decorateBlue('Fasting History') . PHP_EOL .
                 $this->output_decorator->decorateWhite('----------------------------------------------') . PHP_EOL
@@ -281,9 +282,9 @@ class AppOutput
     {
         $this->output->write(
             $this->output_decorator->decorateYellow("Are you sure you want to cancel the current fast? ") .
-                $this->output_decorator->decorateGreen('N') .
+                $this->output_decorator->decorateGreen('n') .
                 $this->output_decorator->decorateWhite(' / ') .
-                $this->output_decorator->decorateRed('Y')
+                $this->output_decorator->decorateRed('y')
         );
     }
 
@@ -307,9 +308,22 @@ class AppOutput
     public function printQuote($quote): void
     {
         $this->output->write(
-            $this->output_decorator->decorateRed("Inspirational Quote:") . PHP_EOL . 
-            $this->output_decorator->decorateWhite($quote->content) . PHP_EOL . 
-            $this->output_decorator->decorateBlue(" - {$quote->author}") . PHP_EOL 
+            PHP_EOL .
+            $this->output_decorator->decorateRed("Inspirational Quote:") . PHP_EOL .
+            $this->output_decorator->decorateWhite($quote->content) . PHP_EOL .
+            $this->output_decorator->decorateBlue(" - {$quote->author}") . PHP_EOL
+        );
+    }
+
+    /**
+     * Outputs message when user exits
+     *
+     * @return void
+     */
+    public function exitMessage(): void
+    {
+        $this->output->write(
+            PHP_EOL . $this->output_decorator->decorateGreen("Thank you for using the app. We hope you ejoyed it :)") . PHP_EOL
         );
     }
 }
