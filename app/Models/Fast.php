@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Components\Fast as FastInstance;
+use App\Utilities\File;
 use Carbon\Carbon;
 
 class Fast
@@ -26,9 +27,13 @@ class Fast
      */
     public function __construct()
     {
+        if (!File::exists(APP_DB))
+            File::createDatabase();
+
         $this->loadFasts();
         $this->setActiveFast();
     }
+
 
     /**
      * Loads and sets all the fasts from database 
@@ -129,7 +134,7 @@ class Fast
                 : [
                     'id' => $fast->id,
                     'status' => $fast->status,
-                    'type' => $fast_type,
+                    'type' => (int)$fast_type,
                     'start_date' => $start_date,
                     'end_date' => $end_date
                 ];

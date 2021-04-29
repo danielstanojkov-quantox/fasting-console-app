@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use App\API\RandomQuote;
+use App\Components\MenuOptions;
 use Exception;
 
 class Tracker
@@ -28,17 +29,11 @@ class Tracker
     public $fastModel;
 
     /**
-     * All available options on the meny
+     * All available menu options
      *
      * @var array
      */
-    public $menu_options = [
-        1 => 'Check the fast status',
-        2 => 'Start a fast ( available only if there is not an active fast)',
-        3 => 'End an active fast (available only if there is an active fast)',
-        4 => 'Update an active fast (available only if there is an active fast)',
-        5 => 'List all fasts'
-    ];
+    public $menu_options;
 
     /**
      * Tracker Constructor
@@ -50,7 +45,6 @@ class Tracker
     {
         $this->input = $input;
         $this->output = $output;
-
         $this->output->initMessage();
         $this->loadModels();
         $this->init();
@@ -74,8 +68,22 @@ class Tracker
      */
     public function init(): void
     {
+        $this->loadMenuOptions();
         $this->displayMenu();
         $this->promptUserForOption();
+    }
+
+    /**
+     * Loads all available options 
+     * depending on the current fast state
+     *
+     * @return void
+     */
+    protected function loadMenuOptions(): void
+    {
+        $this->menu_options = $this->fastModel->isUserFasting()
+            ? MenuOptions::getFastingOptions()
+            : MenuOptions::getNotFastingOptions();
     }
 
     /**
@@ -126,22 +134,9 @@ class Tracker
      */
     public function proccessSelectedOption($option): void
     {
-        switch ($option) {
-            case '1':
-                $this->checkFastStatus();
-                break;
-            case '2':
-                $this->startFast();
-                break;
-            case '3':
-                $this->endActiveFast();
-                break;
-            case '4':
-                $this->updateActiveFast();
-                break;
-            case '5':
-                $this->listAllFasts();
-        }
+        $action = $this->menu_options[$option]['action'];
+
+        $this->$action();
     }
 
     /**
@@ -242,11 +237,11 @@ class Tracker
         $this->output->confirmFastCancelation();
 
         $final_answer = null;
-        $possible_answers = ['n', 'N', 'y', 'Y'];
+        $possible_answers = ['n', 'y'];
 
         while (!$final_answer) {
             $answer = $this->input->read();
-            if (in_array($answer, $possible_answers)) {
+            if (in_array(strtolower($answer), $possible_answers)) {
                 $final_answer = $answer;
 
                 return ($final_answer == 'n' || $final_answer == 'N')
@@ -364,7 +359,6 @@ class Tracker
         }
     }
 
-
     /**
      * User selects option which is currently unavailable
      * because the user doesn't have an active fast
@@ -376,7 +370,6 @@ class Tracker
         $this->output->displayUserNotFastingMessage();
     }
 
-
     /**
      * User selects option which is currently unavailable
      * because the user have an active fast
@@ -387,5 +380,16 @@ class Tracker
     {
         $this->output->displayUserFastingMessage();
         $this->init();
+    }
+
+    /**
+     * Exit application
+     *
+     * @return void
+     */
+    protected function exit(): void
+    {
+        $this->output->exitMessage();
+        die;
     }
 }
