@@ -44,7 +44,7 @@ class AppOutput
         foreach ($options as $key => $option) {
             $this->output->write(
                 $this->output_decorator->decorateYellow("{$key}. ") .
-                    $this->output_decorator->decorateWhite("{$option}")
+                    $this->output_decorator->decorateWhite("{$option['name']}")
             );
         }
     }

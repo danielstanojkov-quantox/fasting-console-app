@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use App\API\RandomQuote;
+use App\Components\MenuOptions;
 use Exception;
 
 class Tracker
@@ -28,17 +29,11 @@ class Tracker
     public $fastModel;
 
     /**
-     * All available options on the meny
+     * All available menu options
      *
      * @var array
      */
-    public $menu_options = [
-        1 => 'Check the fast status',
-        2 => 'Start a fast ( available only if there is not an active fast)',
-        3 => 'End an active fast (available only if there is an active fast)',
-        4 => 'Update an active fast (available only if there is an active fast)',
-        5 => 'List all fasts'
-    ];
+    public $menu_options;
 
     /**
      * Tracker Constructor
@@ -50,7 +45,6 @@ class Tracker
     {
         $this->input = $input;
         $this->output = $output;
-
         $this->output->initMessage();
         $this->loadModels();
         $this->init();
@@ -74,8 +68,22 @@ class Tracker
      */
     public function init(): void
     {
+        $this->loadMenuOptions();
         $this->displayMenu();
         $this->promptUserForOption();
+    }
+
+    /**
+     * Loads all available options 
+     * depending on the current fast state
+     *
+     * @return void
+     */
+    protected function loadMenuOptions(): void
+    {
+        $this->menu_options = $this->fastModel->isUserFasting()
+            ? MenuOptions::getFastingOptions()
+            : MenuOptions::getNotFastingOptions();
     }
 
     /**
@@ -126,22 +134,9 @@ class Tracker
      */
     public function proccessSelectedOption($option): void
     {
-        switch ($option) {
-            case '1':
-                $this->checkFastStatus();
-                break;
-            case '2':
-                $this->startFast();
-                break;
-            case '3':
-                $this->endActiveFast();
-                break;
-            case '4':
-                $this->updateActiveFast();
-                break;
-            case '5':
-                $this->listAllFasts();
-        }
+        $action = $this->menu_options[$option]['action'];
+      
+        $this->$action();
     }
 
     /**
